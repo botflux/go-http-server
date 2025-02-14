@@ -33,6 +33,13 @@ func (s Server) Listen() error {
 		return fmt.Errorf("could not listen on %s: %w", s.ListenAddr, err)
 	}
 
+	defer func(listener net.Listener) {
+		err := listener.Close()
+		if err != nil {
+			fmt.Printf("could not close listener on %s: %v\n", s.ListenAddr, err)
+		}
+	}(listener)
+
 	fmt.Printf("listening on port %s\n", s.ListenAddr)
 
 	for {
