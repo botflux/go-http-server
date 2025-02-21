@@ -24,6 +24,7 @@ type Response struct {
 
 type Server struct {
 	ListenAddr string
+	Router     *Router
 }
 
 func (s Server) Listen() error {
@@ -78,27 +79,30 @@ func (s Server) handleConnection(conn net.Conn) {
 		fmt.Println("connection closed")
 		return
 	}
+	//
+	//if request.Method != "GET" {
+	//	err := s.respond(conn, Response{
+	//		StatusCode: 503,
+	//		Headers:    map[string]string{"Content-Type": "text/html; charset=utf-8"},
+	//		Body:       "<html><body><h1>Not implemented</h1></body></html>",
+	//	})
+	//
+	//	if err != nil {
+	//		fmt.Println("failed to write response, err: ", err)
+	//		return
+	//	}
+	//
+	//	return
+	//}
+	//
+	//err = s.respond(conn, Response{
+	//	StatusCode: 200,
+	//	Headers:    map[string]string{"Content-Type": "text/html; charset=utf-8"},
+	//	Body:       "<html><body><h1>Successful response!</h1></body></html>",
+	//})
 
-	if request.Method != "GET" {
-		err := s.respond(conn, Response{
-			StatusCode: 503,
-			Headers:    map[string]string{"Content-Type": "text/html; charset=utf-8"},
-			Body:       "<html><body><h1>Not implemented</h1></body></html>",
-		})
-
-		if err != nil {
-			fmt.Println("failed to write response, err: ", err)
-			return
-		}
-
-		return
-	}
-
-	err = s.respond(conn, Response{
-		StatusCode: 200,
-		Headers:    map[string]string{"Content-Type": "text/html; charset=utf-8"},
-		Body:       "<html><body><h1>Successful response!</h1></body></html>",
-	})
+	response := s.Router.Handle(request)
+	err = s.respond(conn, response)
 
 	if err != nil {
 		fmt.Println("failed to write response, err: ", err)
