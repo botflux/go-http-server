@@ -3,6 +3,7 @@ package http
 import (
 	"bufio"
 	"fmt"
+	"github.com/botflux/go-http-server/routing"
 	"io"
 	"net"
 	"strconv"
@@ -24,7 +25,7 @@ type Response struct {
 
 type Server struct {
 	ListenAddr string
-	Router     *Router
+	Router     *routing.Router
 }
 
 func (s Server) Listen() error {

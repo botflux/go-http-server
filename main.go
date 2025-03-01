@@ -2,11 +2,12 @@ package main
 
 import (
 	"github.com/botflux/go-http-server/http"
+	"github.com/botflux/go-http-server/routing"
 	"log"
 )
 
 func main() {
-	r := &http.Router{}
+	r := &routing.Router{}
 
 	r.Add("GET", "/", func(request http.Request) http.Response {
 		return http.Response{
