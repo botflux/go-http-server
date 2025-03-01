@@ -62,27 +62,33 @@ func (h *httpRadixTree) Insert(path []string) {
 }
 
 type Router struct {
-	radix *httpRadixTree
+	radixPerMethod map[string]*httpRadixTree
 }
 
 func NewRouter() *Router {
-	r := newRadix()
-
 	return &Router{
-		radix: r,
+		radixPerMethod: map[string]*httpRadixTree{},
 	}
 }
 
-func (router *Router) Add(url string) {
+func (router *Router) Add(method string, url string) {
 	path := strings.Split(url, "/")
 
-	router.radix.Insert(path)
+	if router.radixPerMethod[method] == nil {
+		router.radixPerMethod[method] = newRadix()
+	}
+
+	router.radixPerMethod[method].Insert(path)
 }
 
-func (router *Router) Dispatch(url string) bool {
+func (router *Router) Dispatch(method string, url string) bool {
 	path := strings.Split(url, "/")
 
-	node := router.radix.Search(path)
+	if router.radixPerMethod[method] == nil {
+		return false
+	}
+
+	node := router.radixPerMethod[method].Search(path)
 
 	return node != nil
 }
