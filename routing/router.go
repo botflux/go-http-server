@@ -25,12 +25,8 @@ func (h *httpRadixTree) isPrefix(path []string) bool {
 func (h *httpRadixTree) Search(path []string) *httpRadixTree {
 	isPathEmpty := len(path) == 0
 
-	if isPathEmpty && h.isLeaf() {
+	if isPathEmpty {
 		return h
-	}
-
-	if h.isLeaf() || isPathEmpty {
-		return nil
 	}
 
 	for _, next := range h.nextPaths {
